@@ -103,12 +103,31 @@ class BookContentPage(BoxLayout):
 
             # Add new GIFs
             for gif in gifs:
+                gif_box = BoxLayout(
+                    orientation="vertical", size_hint=(None, 1), width=200
+                )
+
+                # Add GIF image
                 gif_image = Image(
                     source=gif,
-                    size_hint=(None, 1),
-                    size=(200, 200),
+                    size_hint=(1, 0.8),
+                    size=(200, 80),  # Size of the GIF
                 )
-                self.gif_layout.add_widget(gif_image)
+                gif_box.add_widget(gif_image)
+
+                # Add file name label
+                gif_label = Label(
+                    text=gif.split("/")[-1],  # Extract file name from path
+                    size_hint=(1, 0.2),
+                    font_size=18,
+                    halign="center",
+                    valign="middle",
+                    color=(0, 0, 0, 1),
+                )
+                gif_label.bind(size=gif_label.setter("text_size"))
+                gif_box.add_widget(gif_label)
+
+                self.gif_layout.add_widget(gif_box)
 
             # Enable or disable navigation buttons based on current index
             self.left_button.disabled = self.current_sentence_index == 0
