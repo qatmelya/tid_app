@@ -1,5 +1,15 @@
 swagger: "2.0"
 
+info:
+  title: "Tid App Api"
+  version: "1.0"
+  description: "Blank"
+  contact:
+    name: Melisa
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
 basePath: /v1.0
 
 schemes:
@@ -13,77 +23,77 @@ paths:
         - application/json
       responses:
         201:
-          description: Successfully added user to the DB
-        400:
-          description: invalid input, object invalid
-        409:
-          description: an existing item already exists
+          description: Successfully got all books
 
-  /accounts/updateUser:
-    put:
-      tags:
-        - admins
-      operationId: api.accounts.update_user
+  /books/insert_book:
+    post:
+      operationId: api.books.insert_book
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
         - in: body
-          name: user_payload
-          description: Inventory item to add
+          name: book_payload
+          description: Book to add
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/Book"
       responses:
         201:
-          description: Successfully added user to the DB
+          description: Successfully added book to the DB
         400:
           description: invalid input, object invalid
-        408:
-          description: error, item not modified
         409:
           description: an existing item already exists
 
-  /accounts/{user_id}:
+  /book_contents/{book_id}:
     get:
-      tags:
-        - public
-      operationId: api.accounts.read_user
+      operationId: api.book_contents.get_book_contents
       parameters:
         - in: path
-          name: user_id
+          name: book_id
           type: string
           required: true
-          description: Numeric ID of the user to get.
+          description: Book id to get the sentences of.
       responses:
         "200":
-          description: "Fetch a user from the database"
+          description: "Fetch a book's sentences from the database"
           schema:
-            $ref: "#/definitions/User"
-    delete:
-      tags:
-        - admins
+            $ref: "#/definitions/Sentence"
+
+  /book_contents/add_sentence:
+    post:
+      operationId: api.book_contents.add_sentence
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
-        - in: path
-          name: user_id
-          type: string
-          required: true
-          description: Numeric ID of the user to delete.
-      operationId: api.accounts.delete_user
+        - in: body
+          name: sentence_payload
+          description: Sentence to add
+          schema:
+            $ref: "#/definitions/Sentence"
       responses:
-        200:
-          description: Successfully deleted user
+        201:
+          description: Successfully added sentence to the DB
         400:
           description: invalid input, object invalid
         409:
-          description: conflict error
-        401:
-          description: Not correctly authorized
+          description: an existing item already exists
 
 definitions:
-  User:
+  Book:
     type: object
     properties:
       id: { type: string }
-      username: { type: string }
-      password: { type: string }
+      book_title: { type: string }
+      cover_path: { type: string }
+  Sentence:
+    type: object
+    properties:
+      id: { type: string }
+      nth_sentence: { type: string }
+      book_id: { type: string }
+      sentence: { type: string }
+      transcript: { type: string }

@@ -1,2 +1,2 @@
-from backend.api.books import *
-from backend.api.book_contents import *
+from api.books import *
+from api.book_contents import *
