@@ -124,6 +124,7 @@ def get_sentences_by_book_id(book_id):
 
         cursor.execute(query, (book_id,))
         sentences = cursor.fetchall()
+        print(sentences)
         return sentences
 
     except (Exception, psycopg2.DatabaseError) as error:
