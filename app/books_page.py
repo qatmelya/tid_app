@@ -1,6 +1,6 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.image import Image
+from kivy.uix.image import AsyncImage
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 
@@ -30,7 +30,11 @@ story = [
 books = [
     {"name": "Book 1", "cover": "static/book1.jpg", "content": story},
     {"name": "Ayva", "cover": "static/book2.jpg", "content": story},
-    {"name": "Book 3", "cover": "static/book3.png", "content": story},
+    {
+        "name": "Book 3",
+        "cover": "http://127.0.0.1:2020/static/covers/kitap1.jpeg",
+        "content": story,
+    },
 ]
 
 
@@ -78,7 +82,7 @@ class BooksPage(BoxLayout):
             book_layout = BoxLayout(orientation="vertical", size_hint=(0.2, 0.2))
 
             # Add book cover image
-            cover = Image(source=book["cover"], size_hint=(1, 0.8))
+            cover = AsyncImage(source=book["cover"], size_hint=(1, 0.8))
             book_layout.add_widget(cover)
 
             # Add book name as a button

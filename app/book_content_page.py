@@ -1,7 +1,7 @@
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.image import Image
+from kivy.uix.image import AsyncImage
 from kivy.uix.boxlayout import BoxLayout
 
 
@@ -108,7 +108,7 @@ class BookContentPage(BoxLayout):
                 )
 
                 # Add GIF image
-                gif_image = Image(
+                gif_image = AsyncImage(
                     source=gif,
                     size_hint=(1, 0.8),
                     size=(200, 80),  # Size of the GIF
