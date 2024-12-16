@@ -29,15 +29,21 @@ paths:
     post:
       operationId: api.books.insert_book
       consumes:
-        - application/json
+        - multipart/form-data
       produces:
         - application/json
       parameters:
-        - in: body
-          name: book_payload
-          description: Book to add
-          schema:
-            $ref: "#/definitions/Book"
+        - in: formData
+          name: cover_image
+          type: file
+          required: true
+          description: The cover image of the book to upload.
+        - in: formData
+          name: book_title
+          type: string
+          required: true
+          description: Title of the book.
+
       responses:
         201:
           description: Successfully added book to the DB
