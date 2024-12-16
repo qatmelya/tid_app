@@ -60,19 +60,19 @@ class BookContentPage(BoxLayout):
         nav_buttons_layout = BoxLayout(size_hint=(1, 0.1))
 
         self.left_button = Button(
-            text="Önceki", size_hint=(0.3, 1), font_size=18, color=(0, 0, 0, 1)
+            text="Önceki", size_hint=(0.3, 1), font_size=18, color=(1, 1, 1, 1)
         )
         self.left_button.bind(on_press=self.show_previous_sentence)
         nav_buttons_layout.add_widget(self.left_button)
 
         self.back_button = Button(
-            text="Kitaptan Çık", size_hint=(0.4, 1), font_size=18, color=(0, 0, 0, 1)
+            text="Kitaptan Çık", size_hint=(0.4, 1), font_size=18, color=(1, 1, 1, 1)
         )
         self.back_button.bind(on_press=self.go_back)
         nav_buttons_layout.add_widget(self.back_button)
 
         self.right_button = Button(
-            text="Sonraki", size_hint=(0.3, 1), font_size=18, color=(0, 0, 0, 1)
+            text="Sonraki", size_hint=(0.3, 1), font_size=18, color=(1, 1, 1, 1)
         )
         self.right_button.bind(on_press=self.show_next_sentence)
         nav_buttons_layout.add_widget(self.right_button)
@@ -167,4 +167,5 @@ class BookContentPage(BoxLayout):
         )
 
     def go_back(self, instance):
+        self.screen_manager.transition.direction = "right"
         self.screen_manager.current = "books"

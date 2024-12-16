@@ -32,7 +32,7 @@ class MainPage(GridLayout):
         for page in pages:
             btn_layout = GridLayout(spacing=(10, 10))
             btn_layout.cols = 2
-            page_btn = Button(text=page.readable_name, color=(0, 0, 0, 1))
+            page_btn = Button(text=page.readable_name, color=(1, 1, 1, 1))
             btn_icon = Image(source=page.icon_path, size_hint=(0.3, 1))
             btn_layout.add_widget(btn_icon)
             btn_layout.add_widget(page_btn)
@@ -46,4 +46,5 @@ class MainPage(GridLayout):
                 )
 
     def open_page(self, page_name):
+        self.screen_manager.transition.direction = "left"
         self.screen_manager.current = page_name

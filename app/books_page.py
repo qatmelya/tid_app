@@ -60,7 +60,7 @@ class BooksPage(BoxLayout):
         self.add_widget(search_layout)
 
         # Scrollable layout for books
-        self.scroll_view = ScrollView(size_hint=(1, 0.9))
+        self.scroll_view = ScrollView(size_hint=(1, 0.8))
         self.books_layout = GridLayout(
             cols=2, size_hint_y=None, spacing=10, padding=[10, 10, 10, 10]
         )
@@ -68,8 +68,18 @@ class BooksPage(BoxLayout):
         self.scroll_view.add_widget(self.books_layout)
         self.add_widget(self.scroll_view)
 
+        self.back_button = Button(
+            text="Ana Sayfaya Dön", size_hint=(1, 0.1), font_size=18, color=(1, 1, 1, 1)
+        )
+        self.back_button.bind(on_press=self.go_back)
+        self.add_widget(self.back_button)
+
         self.displayed_books = books[:]  # Start with the full list of books
         self.load_books()
+
+    def go_back(self, instance):
+        self.screen_manager.transition.direction = "right"
+        self.screen_manager.current = "main"
 
     def load_books(self):
         # Clear the current book widgets
@@ -114,4 +124,5 @@ class BooksPage(BoxLayout):
         book_content_page.update_content(
             get_book_content_by_id(book["book_id"]), book["title"]
         )
+        self.screen_manager.transition.direction = "left"
         self.screen_manager.current = "book_content"
