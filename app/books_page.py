@@ -1,8 +1,10 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import AsyncImage
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
+from data_requests import get_books, get_book_content_by_id, server_url
 
 story = [
     {
@@ -26,16 +28,7 @@ story = [
     {"sentence": "The dog is barking.", "gifs": ["bark1.gif", "bark2.gif"]},
 ]
 
-# Sample data for books
-books = [
-    {"name": "Book 1", "cover": "static/book1.jpg", "content": story},
-    {"name": "Ayva", "cover": "static/book2.jpg", "content": story},
-    {
-        "name": "Book 3",
-        "cover": "http://127.0.0.1:2020/static/covers/kitap1.jpeg",
-        "content": story,
-    },
-]
+books = get_books()
 
 
 class BooksPage(BoxLayout):
@@ -66,9 +59,14 @@ class BooksPage(BoxLayout):
 
         self.add_widget(search_layout)
 
-        # Grid layout for displaying books
-        self.books_layout = GridLayout(cols=2, size_hint=(1, 0.9))
-        self.add_widget(self.books_layout)
+        # Scrollable layout for books
+        self.scroll_view = ScrollView(size_hint=(1, 0.9))
+        self.books_layout = GridLayout(
+            cols=2, size_hint_y=None, spacing=10, padding=[10, 10, 10, 10]
+        )
+        self.books_layout.bind(minimum_height=self.books_layout.setter("height"))
+        self.scroll_view.add_widget(self.books_layout)
+        self.add_widget(self.scroll_view)
 
         self.displayed_books = books[:]  # Start with the full list of books
         self.load_books()
@@ -79,14 +77,18 @@ class BooksPage(BoxLayout):
 
         # Add filtered books to the grid layout
         for book in self.displayed_books:
-            book_layout = BoxLayout(orientation="vertical", size_hint=(0.2, 0.2))
+            book_layout = BoxLayout(
+                orientation="vertical", size_hint=(1, 1), size_hint_min_y=500
+            )
 
             # Add book cover image
-            cover = AsyncImage(source=book["cover"], size_hint=(1, 0.8))
+            cover = AsyncImage(
+                source=(server_url + book["cover_path"]), size_hint=(1, 0.8)
+            )
             book_layout.add_widget(cover)
 
             # Add book name as a button
-            btn = Button(text=book["name"], size_hint=(1, 0.2))
+            btn = Button(text=book["title"], size_hint=(1, 0.2))
             btn.bind(on_press=lambda instance, book=book: self.open_book(book))
             book_layout.add_widget(btn)
 
@@ -96,7 +98,7 @@ class BooksPage(BoxLayout):
         # Filter books based on search input
         search_query = text.lower()
         self.displayed_books = [
-            book for book in books if search_query in book["name"].lower()
+            book for book in books if search_query in book["title"].lower()
         ]
         self.load_books()
 
@@ -109,5 +111,7 @@ class BooksPage(BoxLayout):
     def open_book(self, book):
         book_content_screen = self.screen_manager.get_screen("book_content")
         book_content_page = book_content_screen.children[0]
-        book_content_page.update_content(book["content"], book["name"])
+        book_content_page.update_content(
+            get_book_content_by_id(book["book_id"]), book["title"]
+        )
         self.screen_manager.current = "book_content"

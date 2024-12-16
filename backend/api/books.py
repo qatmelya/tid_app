@@ -6,7 +6,16 @@ from random import Random
 
 @inject
 def get_all_books():
-    return get_books(), 200
+    books = []
+    for book in get_books():
+        books.append(
+            {
+                "book_id": book[0],
+                "title": book[1],
+                "cover_path": "static/covers/" + book[2],
+            }
+        )
+    return books, 200
 
 
 @inject
