@@ -3,6 +3,7 @@ from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.image import AsyncImage
 from kivy.uix.boxlayout import BoxLayout
+from data_requests import server_url
 
 
 class BookContentPage(BoxLayout):
@@ -82,16 +83,20 @@ class BookContentPage(BoxLayout):
 
     def update_content(self, story, title):
         self.current_story = story
-        self.current_sentence_index = 0
+        self.current_sentence_index = 1
         self.title_label.text = title
         self.display_current_sentence()
 
     def display_current_sentence(self):
         # Get the current sentence and its GIFs
         if self.current_story:
-            current_sentence = self.current_story[self.current_sentence_index]
+            current_sentence = next(
+                sentence
+                for sentence in self.current_story
+                if (sentence["nth_sentence"] == self.current_sentence_index)
+            )
             sentence = current_sentence["sentence"]
-            gifs = current_sentence["gifs"]
+            gifs = current_sentence["transcript"].split(",")
 
             # Update the sentence label
             self.sentence_label.text = sentence
@@ -109,7 +114,7 @@ class BookContentPage(BoxLayout):
 
                 # Add GIF image
                 gif_image = AsyncImage(
-                    source=gif,
+                    source=(server_url + "static/sign_language_media/" + gif),
                     size_hint=(1, 0.8),
                     size=(200, 80),  # Size of the GIF
                 )
@@ -117,7 +122,9 @@ class BookContentPage(BoxLayout):
 
                 # Add file name label
                 gif_label = Label(
-                    text=gif.split("/")[-1],  # Extract file name from path
+                    text=gif.split("/")[-1].split(".")[
+                        0
+                    ],  # Extract file name from path
                     size_hint=(1, 0.2),
                     font_size=18,
                     halign="center",
@@ -130,18 +137,18 @@ class BookContentPage(BoxLayout):
                 self.gif_layout.add_widget(gif_box)
 
             # Enable or disable navigation buttons based on current index
-            self.left_button.disabled = self.current_sentence_index == 0
-            self.right_button.disabled = (
-                self.current_sentence_index == len(self.current_story) - 1
+            self.left_button.disabled = self.current_sentence_index == 1
+            self.right_button.disabled = self.current_sentence_index == len(
+                self.current_story
             )
 
     def show_next_sentence(self, instance):
-        if self.current_sentence_index < len(self.current_story) - 1:
+        if self.current_sentence_index < len(self.current_story):
             self.current_sentence_index += 1
             self.display_current_sentence()
 
     def show_previous_sentence(self, instance):
-        if self.current_sentence_index > 0:
+        if self.current_sentence_index > 1:
             self.current_sentence_index -= 1
             self.display_current_sentence()
 
