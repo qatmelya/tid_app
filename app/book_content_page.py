@@ -4,6 +4,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.image import AsyncImage
 from kivy.uix.boxlayout import BoxLayout
 from data_requests import server_url
+from kivy.uix.video import Video
 
 
 class BookContentPage(BoxLayout):
@@ -113,11 +114,17 @@ class BookContentPage(BoxLayout):
                 )
 
                 # Add GIF image
-                gif_image = AsyncImage(
-                    source=(server_url + "static/sign_language_media/" + gif),
-                    size_hint=(1, 0.8),
-                    size=(200, 80),  # Size of the GIF
-                )
+                if gif.split(".")[-1] in ["mp4", "gif"]:
+                    gif_image = Video(
+                        source=(server_url + "static/sign_language_media/" + gif),
+                        state="play",
+                    )
+                else:
+                    gif_image = AsyncImage(
+                        source=(server_url + "static/sign_language_media/" + gif),
+                        size_hint=(1, 0.8),
+                        size=(200, 80),  # Size of the GIF
+                    )
                 gif_box.add_widget(gif_image)
 
                 # Add file name label
