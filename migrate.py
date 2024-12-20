@@ -37,25 +37,56 @@ def create_tables():
         tables = {
             "books": (
                 "CREATE TABLE IF NOT EXISTS books ("
-                "book_id SERIAL PRIMARY KEY,"
-                "book_title VARCHAR(255) NOT NULL,"
-                "cover_path TEXT"
+                "id SERIAL PRIMARY KEY,"
+                "title VARCHAR(255) NOT NULL,"
+                "cover TEXT"
+                ")"
+            ),
+            "users": (
+                "CREATE TABLE IF NOT EXISTS users ("
+                "id SERIAL PRIMARY KEY,"
+                "name VARCHAR(255) NOT NULL,"
+                "password TEXT NOT NULL,"
+                "email VARCHAR(255) UNIQUE NOT NULL,"
+                "last_access TIMESTAMP"
                 ")"
             ),
             "sentences": (
                 "CREATE TABLE IF NOT EXISTS sentences ("
-                "sentence_id SERIAL PRIMARY KEY,"
+                "id SERIAL PRIMARY KEY,"
                 "nth_sentence INT NOT NULL,"
-                "book_id INT NOT NULL REFERENCES books(book_id),"
                 "sentence TEXT NOT NULL,"
-                "transcript TEXT"
+                "book_id INT NOT NULL REFERENCES books(id)"
                 ")"
             ),
-            "TiD_transcripts": (
-                "CREATE TABLE IF NOT EXISTS TiD_transcripts ("
+            "transcripts": (
+                "CREATE TABLE IF NOT EXISTS transcripts ("
                 "id SERIAL PRIMARY KEY,"
                 "media_path TEXT NOT NULL,"
-                "transcript TEXT"
+                "transcription TEXT"
+                ")"
+            ),
+            "sentence_transcriptions": (
+                "CREATE TABLE IF NOT EXISTS sentence_transcriptions ("
+                "id SERIAL PRIMARY KEY,"
+                "sentence_id INT NOT NULL REFERENCES sentences(id),"
+                "transcript_id INT NOT NULL REFERENCES transcripts(id),"
+                "nth_transcription INT NOT NULL"
+                ")"
+            ),
+            "user_favorited_books": (
+                "CREATE TABLE IF NOT EXISTS user_favorited_books ("
+                "id SERIAL PRIMARY KEY,"
+                "user_id INT NOT NULL REFERENCES users(id),"
+                "book_id INT NOT NULL REFERENCES books(id)"
+                ")"
+            ),
+            "user_book_history": (
+                "CREATE TABLE IF NOT EXISTS user_book_history ("
+                "id SERIAL PRIMARY KEY,"
+                "user_id INT NOT NULL REFERENCES users(id),"
+                "book_id INT NOT NULL REFERENCES books(id),"
+                "last_read_sentence_id INT REFERENCES sentences(id)"
                 ")"
             ),
         }
