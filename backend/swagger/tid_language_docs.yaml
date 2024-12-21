@@ -10,7 +10,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
-basePath: /v1.0
+basePath: /api
 
 schemes:
   - http
@@ -24,6 +24,89 @@ paths:
       responses:
         201:
           description: Successfully got all books
+
+  /books/get_user_favorite_books/{user_id}:
+    get:
+      operationId: api.books.get_user_favorite_books
+      parameters:
+        - in: path
+          name: user_id
+          type: string
+          required: true
+          description: User id to get favorite books.
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Successfully got favorite books
+
+  /books/add_favorite_book:
+    post:
+      operationId: api.books.add_favorite_book
+      parameters:
+        - in: body
+          name: favorite_payload
+          description: Favorite to add
+          schema:
+            $ref: "#/definitions/Favorite"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Successfully added favorite book
+
+  /books/remove_favorite_book:
+    post:
+      operationId: api.books.remove_favorite_book
+      parameters:
+        - in: body
+          name: favorite_payload
+          description: Favorite to add
+          schema:
+            $ref: "#/definitions/Favorite"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Successfully removed favorite book
+
+  /book_contents/get_last_read_sentence:
+    post:
+      operationId: api.book_contents.get_last_read_sentence
+      parameters:
+        - in: body
+          name: last_read_sentence_payload
+          description: last_read_sentence_payload to get
+          schema:
+            $ref: "#/definitions/last_read_sentence"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Successfully got last read sentence
+
+  /book_contents/update_last_read_sentence:
+    post:
+      operationId: api.book_contents.update_last_read_sentence
+      parameters:
+        - in: body
+          name: last_read_sentence_update_payload
+          description: last_read_sentence to update
+          schema:
+            $ref: "#/definitions/last_read_sentence_update"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Successfully updated last read sentence
 
   /books/insert_book:
     post:
@@ -62,7 +145,7 @@ paths:
           required: true
           description: Book id to get the sentences of.
       responses:
-        "200":
+        200:
           description: "Fetch a book's sentences from the database"
           schema:
             $ref: "#/definitions/Sentence"
@@ -88,7 +171,90 @@ paths:
         409:
           description: an existing item already exists
 
+  /analytics/get_daily_unique_visits:
+    get:
+      operationId: api.analytics.get_daily_unique_visits
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+
+  /analytics/get_book_favorite_counts:
+    get:
+      operationId: api.analytics.get_book_favorite_counts
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+
+  /users/get_all_users:
+    get:
+      operationId: api.users.get_all_users
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+
+  /users/register:
+    post:
+      operationId: api.users.register
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: register_payload
+          description: User to register
+          schema:
+            $ref: "#/definitions/Register"
+      responses:
+        201:
+          description: Successfully registered user
+        400:
+          description: User exists
+
+  /users/login:
+    post:
+      operationId: api.users.login
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: login_payload
+          description: User to login
+          schema:
+            $ref: "#/definitions/Login"
+      responses:
+        201:
+          description: Login success, user id returned
+        400:
+          description: User not found
+        401:
+          description: Invalid password
+
 definitions:
+  Favorite:
+    type: object
+    properties:
+      user_id: { type: string }
+      book_id: { type: string }
+  last_read_sentence_update:
+    type: object
+    properties:
+      user_id: { type: string }
+      book_id: { type: string }
+      last_sentence_id: { type: string }
+  last_read_sentence:
+    type: object
+    properties:
+      user_id: { type: string }
+      book_id: { type: string }
   Book:
     type: object
     properties:
@@ -102,4 +268,14 @@ definitions:
       nth_sentence: { type: string }
       book_id: { type: string }
       sentence: { type: string }
-      transcript: { type: string }
+  Register:
+    type: object
+    properties:
+      user_name: { type: string }
+      email: { type: string }
+      password: { type: string }
+  Login:
+    type: object
+    properties:
+      email: { type: string }
+      password: { type: string }

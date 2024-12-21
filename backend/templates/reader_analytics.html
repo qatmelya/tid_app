@@ -1,0 +1,30 @@
+<!-- reader_analytics.html -->
+
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1>Kullanıcı İstatistikleri</h1>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Günlük Kullanıcı Sayısı</h5>
+          <p class="card-text">{{ today_unique_visits }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">En Favorilenen Kitap</h5>
+          <p class="card-text">{{ most_favorited_book }}</p>
+          <img
+            src="{{ url_for('static', filename='uploads/' + most_favorited_book_cover) }}"
+            class="card-img-top"
+            alt="Book Cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
