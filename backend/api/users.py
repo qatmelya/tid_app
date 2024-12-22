@@ -17,7 +17,7 @@ def register(register_payload):
         register_payload["email"],
         datetime.now(),
     )
-    return user["id"], 201
+    return user, 201
 
 
 def login(login_payload):
