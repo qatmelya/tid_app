@@ -7,10 +7,14 @@ from flask import request, jsonify
 from flask import flash, redirect, url_for
 from werkzeug.utils import secure_filename
 import requests
-
+from pathlib import Path
+from random import Random
+from data_access import books
+import sys
 
 app = connexion.App(__name__, specification_dir="swagger/")
 CORS(app.app)
+app.secret_key = "super_secret_key"
 app.add_api("tid_language_docs.yaml", resolver=RestyResolver("api"))
 
 
@@ -89,30 +93,40 @@ def add_book_post():
 
     # Validate file types
     if cover_image.filename.split(".")[-1].lower() not in ["jpg", "png", "jpeg"]:
-        return jsonify({"error": "Invalid cover image type"}), 400
-    if book_content.filename.split(".")[-1].lower() != "txt":
-        return jsonify({"error": "Invalid book content type"}), 400
+        return redirect(url_for("add_book_post"))
+    if book_content.filename.split(".")[-1].lower() != "json":
+        return redirect(url_for("add_book_post"))
 
     # Save files to server
-    cover_image_filename = secure_filename(cover_image.filename)
     book_content_filename = secure_filename(book_content.filename)
-    cover_image.save(os.path.join(app.config["UPLOAD_FOLDER"], cover_image_filename))
-    book_content.save(os.path.join(app.config["UPLOAD_FOLDER"], book_content_filename))
-
-    # WRONG CODE WE USE POSTGRES NOT APIS
-    # # Call API to insert book
-    # api_url = "https://example.com/api/books"
-    # data = {
-    #     "title": title,
-    #     "cover_image": cover_image_filename,
-    #     "book_content": book_content_filename,
-    # }
-    # response = requests.post(api_url, json=data)
-
-    # if response.status_code == 201:
-    #     return jsonify({"message": "Book added successfully"}), 201
-    # else:
-    #     return jsonify({"error": "Failed to add book"}), 500
+    cover_image_filename = secure_filename(
+        cover_image.filename.split(".")[0]
+        + "_"
+        + str(Random().randint(1000, 9999))
+        + "."
+        + cover_image.filename.split(".")[-1]
+    )
+    Path(Path(sys.argv[0]).parent, "static", "covers").mkdir(
+        parents=True, exist_ok=True
+    )
+    try:
+        with open(
+            Path(
+                Path(sys.argv[0]).parent,
+                "static",
+                "covers",
+                cover_image_filename,
+            ),
+            "xb",
+        ) as fp:
+            cover_image.save(fp)
+    except FileExistsError:
+        return (
+            "Cover with same name exists try with changing the cover image name.",
+            400,
+        )
+    books.create_book(title, cover_image_filename)
+    return redirect(url_for("book_catalog"))
 
 
 app.run(port=int(os.environ.get("PORT", 2020)))
