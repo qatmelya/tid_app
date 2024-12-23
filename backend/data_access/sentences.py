@@ -8,10 +8,18 @@ from data_access.base_funcs import (
 
 
 def create_sentence(nth_sentence, sentence, book_id):
-    return create_record(
-        "sentences",
-        ["nth_sentence", "sentence", "book_id"],
-        [nth_sentence, sentence, book_id],
+    return next(
+        iter(
+            tuples_to_dict(
+                ["id", "nth_sentence", "sentence", "book_id"],
+                create_record(
+                    "sentences",
+                    ["nth_sentence", "sentence", "book_id"],
+                    [nth_sentence, sentence, book_id],
+                ),
+            )
+        ),
+        None,
     )
 
 

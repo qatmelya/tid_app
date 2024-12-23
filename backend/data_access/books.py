@@ -8,7 +8,15 @@ from data_access.base_funcs import (
 
 
 def create_book(title, cover):
-    return create_record("books", ["title", "cover"], [title, cover])
+    return next(
+        iter(
+            tuples_to_dict(
+                ["id", "title", "cover"],
+                create_record("books", ["title", "cover"], [title, cover]),
+            )
+        ),
+        None,
+    )
 
 
 def get_all_books():

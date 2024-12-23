@@ -3,16 +3,29 @@ import json
 
 with open("Acil.json", "r", encoding="utf-8") as fp:
     acil_json = json.load(fp)
+book_id = 1
 
-book_id = 2
-transformed_list = [
-    {
+for index, (sentence, files) in enumerate(acil_json.items()):
+    sentence_data = {
         "nth_sentence": str(index + 1),
         "book_id": str(book_id),
         "sentence": sentence,
-        "transcript": ",".join(files),
     }
-    for index, (sentence, files) in enumerate(acil_json.items())
-]
-for data in transformed_list:
-    requests.post("http://127.0.0.1:2020/v1.0/book_contents/add_sentence", json=data)
+    created_sentence = requests.post(
+        "http://127.0.0.1:2020/v1.0/book_contents/add_sentence", json=sentence_data
+    )
+    sentence_id = created_sentence["id"]
+    for i, file in enumerate(files):
+        transcript_id = requests.get(
+            "http://127.0.0.1:2020/api/transcripts/get_by_transcript_string/"
+            + file.split(".")[0]
+        )["id"]
+        st_data = {
+            "nth_transcription": i + 1,
+            "sentence_id": sentence_id,
+            "transcript_id": transcript_id,
+        }
+        requests.post(
+            "http://127.0.0.1:2020/api/book_contents/add_sentence_transcription",
+            json=st_data,
+        )

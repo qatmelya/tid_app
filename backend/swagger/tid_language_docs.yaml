@@ -240,6 +240,30 @@ paths:
         200:
           description: Success
 
+  /transcripts/get_all_transcripts:
+    get:
+      operationId: api.transcripts.get_all_transcripts
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+
+  /transcripts/get_by_transcript_string/{transcript_string}:
+    get:
+      operationId: api.transcripts.get_by_transcript_string
+      parameters:
+        - in: path
+          name: transcript_string
+          type: string
+          required: true
+          description: transcript_string.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+
   /users/register:
     post:
       operationId: api.users.register

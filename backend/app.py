@@ -11,6 +11,7 @@ from pathlib import Path
 from random import Random
 from data_access import books, users
 import sys
+import json
 
 app = connexion.App(__name__, specification_dir="swagger/")
 CORS(app.app)
@@ -93,6 +94,7 @@ def add_book_post():
 
     # Save files to server
     book_content_filename = secure_filename(book_content.filename)
+
     cover_image_filename = secure_filename(
         cover_image.filename.split(".")[0]
         + "_"
@@ -119,7 +121,64 @@ def add_book_post():
             "Cover with same name exists try with changing the cover image name.",
             400,
         )
-    books.create_book(title, cover_image_filename)
+    book_id = books.create_book(title, cover_image_filename)["id"]
+
+    Path(Path(sys.argv[0]).parent, "static", "tmp").mkdir(parents=True, exist_ok=True)
+    with open(
+        Path(
+            Path(sys.argv[0]).parent,
+            "static",
+            "tmp",
+            book_content_filename,
+        ),
+        "wb",
+    ) as fp:
+        book_content.save(fp)
+
+    with open(
+        Path(
+            Path(sys.argv[0]).parent,
+            "static",
+            "tmp",
+            book_content_filename,
+        ),
+        "r",
+        encoding="utf-8",
+    ) as fp:
+        json_str = json.load(fp)
+    os.remove(
+        Path(
+            Path(sys.argv[0]).parent,
+            "static",
+            "tmp",
+            book_content_filename,
+        )
+    )
+
+    for index, (sentence, files) in enumerate(json_str.items()):
+        sentence_data = {
+            "nth_sentence": str(index + 1),
+            "book_id": str(book_id),
+            "sentence": sentence,
+        }
+        created_sentence = requests.post(
+            "http://127.0.0.1:2020/api/book_contents/add_sentence", json=sentence_data
+        ).json()
+        sentence_id = created_sentence["id"]
+        for i, file in enumerate(files):
+            transcript_id = requests.get(
+                "http://127.0.0.1:2020/api/transcripts/get_by_transcript_string/"
+                + file.split(".")[0]
+            ).json()["id"]
+            st_data = {
+                "nth_transcription": i + 1,
+                "sentence_id": sentence_id,
+                "transcript_id": transcript_id,
+            }
+            requests.post(
+                "http://127.0.0.1:2020/api/book_contents/add_sentence_transcription",
+                json=st_data,
+            )
     return redirect(url_for("book_catalog"))
 
 
