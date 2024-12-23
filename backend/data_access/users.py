@@ -56,6 +56,5 @@ def get_todays_unique_visitors():
 
     # Execute query to fetch unique users who accessed today
     query = "SELECT COUNT(DISTINCT id) FROM users " "WHERE DATE(last_access) = %s"
-    cursor = execute_query(query, today)
-    unique_visitors = cursor.fetchone()[0]
-    return unique_visitors
+    unique_visitors = execute_query(query, [today])
+    return unique_visitors[0][0]

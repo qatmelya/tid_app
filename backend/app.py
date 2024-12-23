@@ -43,11 +43,11 @@ def reader_analytics():
     book_favorite_counts_response = requests.get(book_favorite_counts_api_url)
     book_favorite_counts = book_favorite_counts_response.json()
     book_favorite_counts = sorted(
-        book_favorite_counts, key=lambda x: x[2], reverse=True
+        book_favorite_counts, key=lambda x: x["favorited_count"], reverse=True
     )
     most_favorited_book = book_favorite_counts[0]
-    most_favorited_book_title = most_favorited_book[0]
-    most_favorited_book_cover = most_favorited_book[1]
+    most_favorited_book_title = most_favorited_book["title"]
+    most_favorited_book_cover = most_favorited_book["cover"]
 
     return render_template(
         "reader_analytics.html",
