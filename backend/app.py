@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 import requests
 from pathlib import Path
 from random import Random
-from data_access import books
+from data_access import books, users
 import sys
 
 app = connexion.App(__name__, specification_dir="swagger/")
@@ -75,14 +75,8 @@ def user_management():
 
 @app.route("/delete_user/<int:user_id>")
 def delete_user(user_id):
-    api_url = url_for("/api.api_users_delete_user", user_id=user_id, _external=True)
-    response = requests.delete(api_url)
-    if response.status_code == 200:
-        flash("User deleted successfully")
-        return redirect(url_for("user_management"))
-    else:
-        flash("Error deleting user")
-        return redirect(url_for("user_management"))
+    users.delete_user_by_id(user_id)
+    return redirect(url_for("user_management"))
 
 
 @app.route("/add_book", methods=["POST"])
