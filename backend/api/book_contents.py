@@ -1,4 +1,9 @@
-from data_access import sentences, sentence_transcriptions, user_book_histories
+from data_access import (
+    sentences,
+    sentence_transcriptions,
+    user_book_histories,
+    transcripts,
+)
 
 
 def get_book_contents(book_id):
@@ -9,7 +14,10 @@ def get_book_contents(book_id):
                 sentence["id"]
             )
         )
-        sentence["transcriptions"] = transcriptions
+        sentence["transcriptions"] = [
+            transcripts.get_transcript_by_id(transcription["transcript_id"])
+            for transcription in transcriptions
+        ]
     return sentence_list, 200
 
 
@@ -18,6 +26,21 @@ def add_sentence(sentence_payload):
     book_id = sentence_payload["book_id"]
     sentence = sentence_payload["sentence"]
     return sentences.create_sentence(nth_sentence, sentence, book_id), 200
+
+
+def add_sentence_transcription(st_payload):
+    transcript_id = st_payload["transcript_id"]
+    sentence_id = st_payload["sentence_id"]
+    nth_transcription = st_payload["nth_transcription"]
+    return sentence_transcriptions.create_sentence_transcription(
+        sentence_id, transcript_id, nth_transcription
+    ), 200
+
+
+def add_transcription(transcript_payload):
+    media_path = transcript_payload["media_path"]
+    transcription = transcript_payload["transcription"]
+    return transcripts.create_transcript(media_path, transcription), 200
 
 
 def get_last_read_sentence(last_read_sentence_payload):
