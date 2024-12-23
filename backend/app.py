@@ -1,8 +1,6 @@
 import os
 import connexion
-from flask_injector import FlaskInjector
 from connexion.resolver import RestyResolver
-from injector import Binder
 from flask_cors import CORS
 from flask import render_template
 from flask import request, jsonify
@@ -11,14 +9,9 @@ from werkzeug.utils import secure_filename
 import requests
 
 
-def configure(binder: Binder) -> Binder:
-    pass
-
-
 app = connexion.App(__name__, specification_dir="swagger/")
 CORS(app.app)
 app.add_api("tid_language_docs.yaml", resolver=RestyResolver("api"))
-FlaskInjector(app=app.app, modules=[configure])
 
 
 @app.route("/")
