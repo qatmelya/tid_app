@@ -169,11 +169,11 @@ def add_book_post():
             transcript_id = requests.get(
                 "http://127.0.0.1:2020/api/transcripts/get_by_transcript_string/"
                 + file.split(".")[0]
-            ).json()["id"]
+            ).json()
             st_data = {
                 "nth_transcription": i + 1,
                 "sentence_id": sentence_id,
-                "transcript_id": transcript_id,
+                "transcript_id": transcript_id["id"],
             }
             requests.post(
                 "http://127.0.0.1:2020/api/book_contents/add_sentence_transcription",

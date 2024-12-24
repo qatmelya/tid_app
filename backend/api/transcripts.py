@@ -6,4 +6,5 @@ def get_all_transcripts():
 
 
 def get_by_transcript_string(transcript_string):
-    return transcripts.get_transcript_by_string(transcript_string)
+    transcription = transcripts.get_transcript_by_string(transcript_string)
+    return transcription, 200
