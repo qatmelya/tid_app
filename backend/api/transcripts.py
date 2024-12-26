@@ -1,4 +1,5 @@
 from data_access import transcripts
+from flask import jsonify
 
 
 def get_all_transcripts():
@@ -7,4 +8,4 @@ def get_all_transcripts():
 
 def get_by_transcript_string(transcript_string):
     transcription = transcripts.get_transcript_by_string(transcript_string)
-    return transcription, 200
+    return jsonify(transcription), 200

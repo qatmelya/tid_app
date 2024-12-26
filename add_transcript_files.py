@@ -20,3 +20,5 @@ for filename in os.listdir(directory):
         requests.post(
             "http://127.0.0.1:2020/api/book_contents/add_transcription", json=data
         )
+        print("Added " + file_name)
+print("Done adding transcripts!")

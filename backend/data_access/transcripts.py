@@ -25,7 +25,8 @@ def get_transcript_by_id(transcript_id):
                 ["id", "media_path", "transcription"],
                 read_records("transcripts", f"id = {transcript_id}"),
             )
-        )
+        ),
+        None,
     )
 
 
@@ -36,7 +37,8 @@ def get_transcript_by_string(transcript_string):
                 ["id", "media_path", "transcription"],
                 read_records("transcripts", f"transcription = '{transcript_string}'"),
             )
-        )
+        ),
+        None,
     )
 
 

@@ -25,7 +25,6 @@ def create_record(table, columns, values):
     placeholders = ", ".join(["%s"] * len(values))
     query = f"INSERT INTO {table} ({columns_str}) VALUES ({placeholders}) RETURNING *"
     result = execute_query(query, values)
-    print(f"Inserted record: {result}")
     return result
 
 
@@ -34,8 +33,6 @@ def read_records(table, conditions=None):
     if conditions:
         query += f" WHERE {conditions}"
     results = execute_query(query)
-    for result in results:
-        print(result)
     return results
 
 
@@ -44,14 +41,12 @@ def update_record(table, updates, conditions):
     query = f"UPDATE {table} SET {updates_str} WHERE {conditions} RETURNING *"
     values = list(updates.values())
     result = execute_query(query, values)
-    print(f"Updated record: {result}")
     return result
 
 
 def delete_record(table, conditions):
     query = f"DELETE FROM {table} WHERE {conditions} RETURNING *"
     result = execute_query(query)
-    print(f"Deleted record: {result}")
     return result
 
 
