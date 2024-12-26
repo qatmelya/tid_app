@@ -55,5 +55,5 @@ def delete_record(table, conditions):
     return result
 
 
-def tuples_to_dict(tuple_keys, book_tuples):
-    return [dict(zip(tuple_keys, book)) for book in book_tuples]
+def tuples_to_dict(tuple_keys, tuples):
+    return [dict(zip(tuple_keys, my_tuple)) for my_tuple in tuples]
